@@ -1,4 +1,4 @@
-from code import wikipedia_pb2, decoder, utils, extractLink
+from code import wikipedia_pb2, decoder, utils 
 import os
 import pickle
 import re
