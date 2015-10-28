@@ -1,0 +1,8 @@
+import "spinn3rApi.proto";
+
+package contentApi;
+
+extend Content {
+  repeated Link content_links = 101;
+}
+

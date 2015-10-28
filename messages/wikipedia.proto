@@ -1,0 +1,30 @@
+syntax = "proto2";
+
+package Wikipedia;
+
+message WikipediaPage {
+
+    required int32 id                   =1;
+    optional string title                =2;
+    optional int32 namespace            =3;
+    optional string redirect             =4;
+    optional string restrictions         =5;
+    repeated WikipediaRevision revisions= 6;
+
+}
+
+message WikipediaRevision {
+
+  required int32 id                   =1;
+  optional string time_stamp           =2;
+  optional string contributor          =3;
+  optional bool minor                  =4;
+  optional string comment              =5;
+  optional string diff                 =6;
+  optional string sha1                 =7;
+  optional int32 parent_id             =8;
+  optional int32 previous_id           =9;
+  optional string model                =10;
+  optional string format               =11;
+  optional bool beginningofpage      =12;
+}
