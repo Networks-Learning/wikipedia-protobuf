@@ -22,16 +22,16 @@ parser.add_argument('-i','--input', type=str, required=True,
 parser.add_argument('-o','--output', type=str,
                    help = 'Output directory')
 parser.add_argument('-m','--match', type=str, default  = None,
-                   help = 'Regular expression to match only some paths')
+                   help = 'Regular expression to match only some paths, this is useful if you would like to split the process into several parts.')
 parser.add_argument('--after', type=str,default = None,
-                   help = 'starts parsing directories with names after given pattern')
+                   help = 'starts parsing files only with names matching after the given pattern, excluding the pattern itself. Note that this only skips one file, if multiple files match only the first is skipped.')
 parser.add_argument('--before', type=str,default = None,
-                   help = 'ends before the matching directory')
+                   help = 'ends before the matching path The boundary is exclusing.')
 parser.add_argument('--space',type=float, default = 128,
-                   help = 'meta data size per file(before zip)')
+                   help = 'meta data size per file(before zip). The chunksize for each proto file. Note that this is a soft threshold, if a document is large the threshold may not be respected.')
 parser.add_argument('--mzip', dest = 'mzip', action = 'store_true', default = False,
-                   help = 'zip meta')
-parser.add_argument('--temp', dest = 'temp', default = None, type = str)
+                   help = 'zip metadata after processing.')
+parser.add_argument('--temp', dest = 'temp', default = None, type = str, help= 'a temp directory to unzip files, the files created ar removed after processing. If not provided the input directory is used.')
 
 def get_diffs(page,w_page):
   def extractdiff(page,first = ""):
