@@ -10,7 +10,7 @@ import argparse
 from mw import xml_dump
 import itertools as itool
 import difflib
-from spinn3rApi import wikipedia_pb2, decoder
+from code import wikipedia_pb2, decoder, buffer_utils
 import fnmatch
 import os
 import subprocess
@@ -24,10 +24,10 @@ parser.add_argument('-o','--output', type=str,
 parser.add_argument('-m','--match', type=str, default  = None,
                    help = 'Regular expression to match only some paths')
 parser.add_argument('--after', type=str,default = None,
-                   help = 'starts parsing directories with names after given pattern') 
+                   help = 'starts parsing directories with names after given pattern')
 parser.add_argument('--before', type=str,default = None,
                    help = 'ends before the matching directory')
-parser.add_argument('--space',type=float, default = 128, 
+parser.add_argument('--space',type=float, default = 128,
                    help = 'meta data size per file(before zip)')
 parser.add_argument('--mzip', dest = 'mzip', action = 'store_true', default = False,
                    help = 'zip meta')
@@ -38,7 +38,7 @@ def get_diffs(page,w_page):
      pre = first
      for rev in page:
        yield rev,difflib.context_diff(rev.text.split('\n'),pre.split('\n'))
-       pre = rev.text 
+       pre = rev.text
   before_id = -1
   res = []
   for rev, diff in extractdiff(page):
@@ -79,50 +79,6 @@ def read_file(fi):
     print(len(page.SerializeToString()))
     yield page
 
-def extract_files(dir_path,match=None, return_filename = False, match_after = None,match_before = None, temp_path = None):
-  count = 0
-  files = sorted(filter(lambda f:True if match == None else fnmatch.fnmatch(f,match),os.listdir(dir_path)))
-  
-  match_after_index = 0
-  if match_after is not None:
-    for fi in files:
-      match_after_index +=1
-      if fnmatch.fnmatch(fi,match_after):
-        break
-  match_before_index = len(files)
-  if match_before is not None:
-    for fi in files:
-      if fnmatch.fnmatch(fi,match_before):
-        match_before_index = counter
-        break
-        
-
-  print("First file: %s \n Last file: %s" % (files[match_after_index],files[match_before_index-1]))
-  for f_set in files[match_after_index:match_before_index]:
-    complete_path = ""
-    type_ = ""
-    if fnmatch.fnmatch(os.path.join(dir_path,f_set), '*.7z'):
-      print(os.path.join(dir_path,f_set))
-      source = (dir_path if temp_path is None else temp_path)
-      complete_path = (os.path.join(source , f_set)).replace('.7z','')
-      subprocess.call(["7z",'x',os.path.join(dir_path,f_set),'-o%s' % source ])
-      type_ = ".7z"
-    else:
-      complete_path = os.path.join(dir_path,f_set)
-    counter = 0
-    try:
-      for item in read_file(complete_path):
-        if return_filename:
-          yield (item,complete_path+type_)
-        else:
-          yield item
-        counter += 1
-    except:
-      fi = open('wiki_errors.log',"a")
-      fi.write(complete_path+"\n")
-    if fnmatch.fnmatch(os.path.join(dir_path,f_set), '*.7z'):
-      os.remove(complete_path)
-
 buff_meta = []
 size_meta = 0
 curr_file_index = ""
@@ -153,9 +109,9 @@ def consumer_metadata(val):
 
 def finalize():
   global buff_meta
-  if len(buff_meta) > 0: 
+  if len(buff_meta) > 0:
     print('writing last set of meta')
-    
+
     m = hashlib.md5()
     m.update(buff_meta[0].SerializeToString())
     curr_hash = m.hexdigest()
@@ -170,7 +126,7 @@ def finalize():
 if __name__ == "__main__":
   args = parser.parse_args()
   print("start")
-  production = extract_files(args.input, args.match, True, args.after, args.before,args.temp)
+  production = buffer_utils.extract_files(args.input, read_file, args.match, True, args.after, args.before,args.temp)
   for item in map(consumer_metadata,production):
     pass
   finalize()
