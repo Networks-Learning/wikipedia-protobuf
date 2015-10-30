@@ -50,3 +50,41 @@ optional arguments:
                         directory is used.
 
 ```
+
+## Extracting a subset of documents given an input list
+
+Assuming documents are stored in proto format one can extract a subset od documents given a list of document names by calling [list.py](./code/list.py). Similar to above script this script can be used as follows:
+
+```bash
+python -m code.list -i PATH/TO/PROTO/FILES -o OUTPUT/DIRECTORY -l FILENAME/WITH/DOCUMENT/NAMES -s 150 -o ./OUTPUT/FILE --sep '\t' --logging I --column 1
+```
+
+This call reads data from input directory and a list. Assumes the list file is a csv file separated with tabs and read document names from column 1(column 0 is first column and default value).
+
+Calling help on this script provides the arguments:
+
+```bash
+python -m code.list -h
+usage: list.py [-h] -i INPUT -l LIST -o OUTPUT -s SIZE [--logging LOGGING]
+               [--logging_dir LOGGING_DIR] [--column COLUMN] [--sep SEP]
+               [--has_header]
+
+This scripts extract link information from a given list of wikipedia pages
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUT, --input INPUT
+                        Input directory of wikipedia pages.
+  -l LIST, --list LIST  list of wikipedia pages.
+  -o OUTPUT, --output OUTPUT
+                        output directory
+  -s SIZE, --size SIZE  output file sizes
+  --logging LOGGING     logging level, can be
+                        [W]arning,[E]rror,[D]ebug,[I]nfo,[C]ritical
+  --logging_dir LOGGING_DIR
+                        path for storing log files
+  --column COLUMN       column number, 0 picks the first column
+  --sep SEP             separator for csv file
+  --has_header          input csv has header
+
+```
