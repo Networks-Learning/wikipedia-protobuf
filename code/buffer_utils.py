@@ -2,11 +2,11 @@ import os
 import fnmatch
 import subprocess
 
-def extract_files(dir_path, read_file,match=None, return_filename = False, 
+def extract_files(dir_path, read_file,match=None, return_filename = False,
                   match_after = None,match_before = None, temp_path = None,error_file='errors.log'):
   count = 0
   files = sorted(filter(lambda f:True if match == None else fnmatch.fnmatch(f,match),os.listdir(dir_path)))
-  
+
   match_after_index = 0
   if match_after is not None:
     for fi in files:
@@ -14,12 +14,14 @@ def extract_files(dir_path, read_file,match=None, return_filename = False,
       if fnmatch.fnmatch(fi,match_after):
         break
   match_before_index = len(files)
+  counter = 0
   if match_before is not None:
     for fi in files:
       if fnmatch.fnmatch(fi,match_before):
         match_before_index = counter
         break
-        
+      counter+=1
+
 
   print("First file: %s \n Last file: %s" % (files[match_after_index],files[match_before_index-1]))
   for f_set in files[match_after_index:match_before_index]:
