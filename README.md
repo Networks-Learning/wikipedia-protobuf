@@ -88,3 +88,43 @@ optional arguments:
   --has_header          input csv has header
 
 ```
+
+## Extracting document statistics
+
+This script demonstrates how the data that is processed using above scripts can be used for other works. Calling [link.py](./code/link.py) read the input data and outputs a dictionary in [pickle]() format containing document index, list of web domains referenced in the dataset, a list of links with time they were inserted and removed(-1 if not removed). This script also needs a file called `effective_tld_names.dat.txt` which contains top level domains. You read more about this [here](http://stackoverflow.com/questions/1066933/how-to-extract-top-level-domain-name-tld-from-url) and get a copy of a possible tld list from [here](https://publicsuffix.org/list/effective_tld_names.dat)
+
+```
+python -m code.link -i INPUT/DIRECTORY -o OUTPUT/PICKLE/FILE
+```
+
+Calling help on this script returns additional arguments for this script:
+
+```bash
+python -m code.link -h
+usage: link.py [-h] -i INPUT -o OUTPUT [-m MATCH] [--after AFTER]
+               [--before BEFORE] [--ltd_names LTD_NAMES] [--count COUNT]
+
+Process wikipedia data, extract links and life time.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUT, --input INPUT
+                        Input directory.
+  -o OUTPUT, --output OUTPUT
+                        Output file
+  -m MATCH, --match MATCH
+                        Regular expression to match only some paths, this is
+                        useful if you would like to split the process into
+                        several parts.
+  --after AFTER         starts parsing files only with names matching after
+                        the given pattern, excluding the pattern itself. Note
+                        that this only skips one file, if multiple files match
+                        only the first is skipped.
+  --before BEFORE       ends before the matching path The boundary is
+                        exclusing.
+  --ltd_names LTD_NAMES
+                        tld_list, this file contains the list of primary
+                        domains and is necessary to extract main domains.
+  --count COUNT         number of items per file
+
+```

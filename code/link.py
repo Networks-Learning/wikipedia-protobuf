@@ -14,18 +14,20 @@ import argparse
 import pickle
 from collections import OrderedDict
 
-parser = argparse.ArgumentParser(description='Process wikipedia data, extract links life time.')
+parser = argparse.ArgumentParser(description='Process wikipedia data, extract links and life time.')
 parser.add_argument('-i','--input', type=str, required=True,
                    help = 'Input directory.')
 parser.add_argument('-o','--output', type=str, required = True,
                    help = 'Output file')
 parser.add_argument('-m','--match', type=str, default  = None,
-                   help = 'Regular expression to match only some paths')
+                   help = 'Regular expression to match only some paths, this is useful if you would like to split the process into several parts.')
 parser.add_argument('--after', type=str,default = None,
-                   help = 'starts parsing directories with names after given pattern') 
+                   help = 'starts parsing files only with names matching after the given pattern, excluding the pattern itself. Note that this only skips one file, if multiple files match only the first is skipped.')
 parser.add_argument('--before', type=str,default = None,
-                   help = 'ends before the matching directory')
-parser.add_argument('--count',type=float, default = 128, 
+                   help = 'ends before the matching path The boundary is exclusing.')
+parser.add_argument('--ltd_names', type=str, default='effective_tld_names.dat',
+                   help = 'tld_list, this file contains the list of primary domains and is necessary to extract main domains.')
+parser.add_argument('--count',type=float, default = 128,
                    help = 'number of items per file')
 
 def read_file(fi):
@@ -37,15 +39,15 @@ def read_file(fi):
 
 def revision_extract_links(revision,reverse):
   new_links = set()
-  old_links = set()    
+  old_links = set()
   for segment in revision.diff.split("***************")[1:]:
     new,old = utils.parseChange(segment)
     res_new = re.findall("^[!+-].*(?P<url>https?://[a-zA-Z0-9-\./]+)", new,re.MULTILINE)
-    
+
     if len(res_new) >0:
       for link in res_new:
         new_links.add(link)
-    
+
     res_old = re.findall("^[\!\+\-].*(?P<url>https?://[a-zA-Z0-9-\./]+)", old,re.MULTILINE)
     if len(res_old) > 0:
       for link in res_old:
@@ -65,14 +67,14 @@ def doc_extract_links(doc):
   t = -1
   for id_, time, new, old in links_list:
     if t> time:
-      print('black hole detected, traveling back in time!! now: %d, input: %d' % (t,time)) 
+      print('black hole detected, traveling back in time!! now: %d, input: %d' % (t,time))
     else:
       t = time
     for o in old:
       if o not in open_:
         raise Exception("old item not found %s" % o)
       start_ = open_[o]['date']
-      open_[o]['count'] -= 1 
+      open_[o]['count'] -= 1
       if open_[o]['count'] == 0:
         if start_>time:
           print('start later than end! %s, %s' % (str(start_),str(time)))
@@ -103,7 +105,7 @@ if __name__ == '__main__':
   args = parser.parse_args()
   docs = buffer_utils.extract_files(args.input,read_file, args.match, False, args.after, args.before)
   docs_items = map(doc_extract_links,docs)
-  tld = utils.get_tld_list()
+  tld = utils.get_tld_list(args.ltd_names)
   sites = OrderedDict()
   doc_index = 0
   final_items = []

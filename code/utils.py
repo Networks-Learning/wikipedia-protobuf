@@ -10,22 +10,22 @@ def check_vand(pre,new,after,temp_dir):
   append_name(pre,'pre')
   append_name(new,'new')
   append_name(after,'after')
-  with open(os.path.join(temp_dir,'out1'),'w') as f_out:  
-    res = subprocess.Popen(["combinediff", 
+  with open(os.path.join(temp_dir,'out1'),'w') as f_out:
+    res = subprocess.Popen(["combinediff",
                         os.path.join(temp_dir,'pre'),
                         os.path.join(temp_dir,'new')],stdout=f_out,stderr=subprocess.PIPE)
     res.wait()
-  with open(os.path.join(temp_dir,'out2'),'w') as f_out2:  
-    res2 = subprocess.Popen(["combinediff", 
+  with open(os.path.join(temp_dir,'out2'),'w') as f_out2:
+    res2 = subprocess.Popen(["combinediff",
                         os.path.join(temp_dir,'out1'),
                         os.path.join(temp_dir,'after')],stdout=f_out2,stderr=subprocess.PIPE)
     res2.wait()
-  b = subprocess.Popen(["interdiff", 
+  b = subprocess.Popen(["interdiff",
                       os.path.join(temp_dir,'pre'),
                       os.path.join(temp_dir,'out2')],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
   b.wait()
   (stdoutdata, stderrdata) = b.communicate()
-  
+
   return len(stdoutdata)==0
 
 def countChanges(lines):
@@ -52,7 +52,7 @@ def parseChange(lines):
 
 ## extracted from http://stackoverflow.com/questions/1066933/how-to-extract-top-level-domain-name-tld-from-url
 # load tlds, ignore comments and empty lines:
-def get_tld_list(fi = "./wikidatasets/effective_tld_names.dat.txt"):
+def get_tld_list(fi = "./effective_tld_names.dat"):
   with open(fi,'r',encoding="utf-8") as tld_file:
     tlds = [line.strip() for line in tld_file if line[0] not in "/\n"]
   return tlds
@@ -71,9 +71,9 @@ def get_domain(url, tlds):
         wildcard_candidate = ".".join(["*"] + last_i_elements[1:]) # *.co.uk, *.uk, *
         exception_candidate = "!" + candidate
 
-        # match tlds: 
+        # match tlds:
         if (exception_candidate in tlds):
-            return ".".join(url_elements[i:]) 
+            return ".".join(url_elements[i:])
         if (candidate in tlds or wildcard_candidate in tlds):
             return ".".join(url_elements[i-1:])
             # returns "abcde.co.uk"
