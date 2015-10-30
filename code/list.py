@@ -1,4 +1,4 @@
-""" 
+"""
    This scrip extracts a list of wikipedia pages using a given list
 """
 
@@ -11,7 +11,7 @@ import logging
 import pandas as pd
 import datetime
 
-parser = argparse.ArgumentParser(description='This scripts extract link information from a given list of wikipedia pages')
+parser = argparse.ArgumentParser(description='This scripts extract subset of documents from a list of wikipedia pages.')
 parser.add_argument('-i','--input', type=str, required=True,
                    help = 'Input directory of wikipedia pages.')
 parser.add_argument('-l','--list', type=str, required=True,
@@ -52,7 +52,7 @@ if __name__ == "__main__":
   df = pd.read_csv(args.list,sep = args.sep,header = 0 if args.has_header else None)
   print(df.columns[args.column])
   names = [k for k in map(lambda x:x.replace(' ','_'),df[df.columns[args.column]].str.replace('"','').tolist())]
-  logging.info('first title %s'  % names[0]) 
+  logging.info('first title %s'  % names[0])
   size_meta = 0
   buff = []
   titles = set()
@@ -70,13 +70,8 @@ if __name__ == "__main__":
         size_meta += len(item.SerializeToString())
         buff.append(item)
   if len(set(names).difference(titles)) > 0:
-    logging.warning("Following names were not found: %s" % str(set(names).difference(titles))) 
+    logging.warning("Following names were not found: %s" % str(set(names).difference(titles)))
   if len(buff)>0:
     store(buff)
     buff = []
     size_meta = 0
-
-
-
-
-

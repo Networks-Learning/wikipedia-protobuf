@@ -69,7 +69,7 @@ usage: list.py [-h] -i INPUT -l LIST -o OUTPUT -s SIZE [--logging LOGGING]
                [--logging_dir LOGGING_DIR] [--column COLUMN] [--sep SEP]
                [--has_header]
 
-This scripts extract link information from a given list of wikipedia pages
+This scripts extract subset of documents from a list of wikipedia pages
 
 optional arguments:
   -h, --help            show this help message and exit
